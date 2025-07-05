@@ -28,4 +28,23 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                    """
     )
     Page<MonthDTO> searchTransactionsCurrentMonthByUserId(Long UserId, Pageable pageable);
+
+    @Query(nativeQuery = true,
+            value = """
+                    SELECT
+                        t.id,
+                        t.date,
+                        t.payee,
+                        t.type,
+                        t.status,
+                        t.amount,
+                        t.user_id
+                    FROM tb_transaction t
+                    WHERE MONTH(t.date) = :month 
+                      AND YEAR(t.date) = YEAR(CURDATE())
+                      AND t.user_id = :UserId
+                    ORDER BY t.date;
+                   """
+    )
+    Page<MonthDTO> searchTransactionsUsingSpecificMonth(Long UserId, Pageable pageable, int month);
 }
