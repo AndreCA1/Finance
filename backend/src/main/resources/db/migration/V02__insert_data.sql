@@ -3,15 +3,19 @@ INSERT INTO tb_role (authority) VALUES ('ROLE_USER');
 INSERT INTO tb_role (authority) VALUES ('ROLE_ADMIN');
 
 -- Inserção de usuários
-INSERT INTO tb_user (name, email, password) VALUES ('User One', 'user1@example.com', '123456');
-INSERT INTO tb_user (name, email, password) VALUES ('Admin One', 'admin1@example.com', 'admin123');
+INSERT INTO tb_user (name, email, password)
+-- senha 123456
+VALUES ('User One', 'user1@example.com', '$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG');
+INSERT INTO tb_user (name, email, password)
+VALUES ('Admin One', 'admin1@example.com', '$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG');
+
 
 -- Atribuição de roles aos usuários
 -- Supondo que os IDs das roles são 1 para USER e 2 para ADMIN
 -- E os IDs dos usuários são 1 para user1 e 2 para admin1
-INSERT INTO userRole (user_id, role_id) VALUES (1, 1); -- user1 -> ROLE_USER
-INSERT INTO userRole (user_id, role_id) VALUES (2, 1); -- admin1 -> ROLE_USER
-INSERT INTO userRole (user_id, role_id) VALUES (2, 2); -- admin1 -> ROLE_ADMIN
+INSERT INTO tb_user_role (user_id, role_id) VALUES (1, 1); -- user1 -> ROLE_USER
+INSERT INTO tb_user_role (user_id, role_id) VALUES (2, 1); -- admin1 -> ROLE_USER
+INSERT INTO tb_user_role (user_id, role_id) VALUES (2, 2); -- admin1 -> ROLE_ADMIN
 
 -- Inserção de 12 meses para user1 e admin1
 -- Datas no formato 01/MM/2025
