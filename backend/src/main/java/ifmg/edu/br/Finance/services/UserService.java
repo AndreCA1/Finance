@@ -99,7 +99,7 @@ public class UserService implements UserDetailsService {
 
         User user = new User();
         user.setEmail(result.get(0).getUserEmail());
-        user.setPassword(result.get(1).getPassword());
+        user.setPassword(result.get(0).getPassword());
         for (UserDetailsProjection p : result){
             user.addRole(new Role(p.getRoleId(), p.getAuthority()));
         }

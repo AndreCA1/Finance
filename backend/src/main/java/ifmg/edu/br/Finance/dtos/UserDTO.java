@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -31,6 +32,9 @@ public class UserDTO {
         id = entity.getId();
         name = entity.getName();
         email = entity.getEmail();
-        entity.getRoles().forEach(role -> roles.add(new RoleDTO(role)));
+        roles = new HashSet<>();
+        if (entity.getRoles() != null) {
+            entity.getRoles().forEach(role -> roles.add(new RoleDTO(role)));
+        }
     }
 }

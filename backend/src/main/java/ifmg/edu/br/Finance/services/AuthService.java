@@ -2,7 +2,7 @@ package ifmg.edu.br.Finance.services;
 
 import ifmg.edu.br.Finance.dtos.EmailDTO;
 import ifmg.edu.br.Finance.dtos.NewPasswordDTO;
-import ifmg.edu.br.Finance.dtos.ResquestTokenDTO;
+import ifmg.edu.br.Finance.dtos.RequestTokenDTO;
 import ifmg.edu.br.Finance.entities.PasswordRecover;
 import ifmg.edu.br.Finance.entities.User;
 import ifmg.edu.br.Finance.repository.PasswordRecoveryRepository;
@@ -23,6 +23,9 @@ public class AuthService {
     @Value("${email.password-recover.token.minutes}")
     private int tokenMinutes;
 
+    @Value("${email.password-recover.uri}")
+    private String uri;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -36,28 +39,33 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private PasswordRecoveryRepository passwordRecoverRepository;
+    private PasswordRecoveryRepository passwordRecoveryRepository;
 
-    //TODO: Definir se vai ser um link ou continuar como código
     @Transactional
-    public void createRecoverToken(ResquestTokenDTO dto) {
-        //Busca user pelo email
-        User entity = userRepository.findByEmail(dto.getEmail());
-
-        if (entity == null) throw new ResourceNotFound("Email not found!");
+    public PasswordRecover saveRecoverToken(String email) {
         //gera token
         String token = String.format("%06d", new Random().nextInt(1_000_000));
 
         //inserir no BD
         PasswordRecover passwordRecover = new PasswordRecover();
         passwordRecover.setToken(token);
-        passwordRecover.setEmail(entity.getEmail());
+        passwordRecover.setEmail(email);
         passwordRecover.setExpiration(Instant.now().plusSeconds(tokenMinutes * 60L));
 
-        passwordRecoverRepository.save(passwordRecover);
+        passwordRecoveryRepository.save(passwordRecover);
+        return passwordRecover;
+    }
+
+    @Transactional
+    public void createRecoverToken(RequestTokenDTO dto) {
+        //Busca user pelo email
+        User entity = userRepository.findByEmail(dto.getEmail());
+        if (entity == null) throw new ResourceNotFound("Email not found!");
+
+        PasswordRecover token = saveRecoverToken(dto.getEmail());
 
         String body = "Use o código abaixo para redefinir sua senha:" +
-                "\n\nCódigo: " + token +
+                "\n\nCódigo: " + token.getToken() +
                 "\nVálido por " + tokenMinutes + " minutos.";
         EmailDTO email = new EmailDTO(entity.getEmail(), "Password Recover", body);
         emailService.sendEmail(email);
@@ -65,7 +73,7 @@ public class AuthService {
 
     @Transactional
     public void resetPassword(NewPasswordDTO dto) {
-        PasswordRecover recover = passwordRecoverRepository.searchValidToken(dto.getToken(), Instant.now());
+        PasswordRecover recover = passwordRecoveryRepository.searchValidToken(dto.getToken(), Instant.now());
 
         if(recover == null){
             throw new ResourceNotFound("Token not found");

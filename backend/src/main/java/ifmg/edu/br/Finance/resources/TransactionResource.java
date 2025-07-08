@@ -80,7 +80,7 @@ public class TransactionResource {
         return ResponseEntity.noContent().build();
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "/{id}/month", produces = "application/json")
     @Operation(
             description = "Get all transactions of current month",
