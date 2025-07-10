@@ -53,7 +53,7 @@ export default function Login() {
           <div className="col-md-8 offset-md-2 col-lg-6 offset-lg-3 col-xxl-4 offset-xxl-4">
             <div className="d2c_login_wrapper">
               <div className="text-center mb-4">
-                <h4 className="text-capitalize">Welcome Findeshdev</h4>
+                <h4 className="text-capitalize">Login</h4>
                 <p className="text-muted">
                   Don't have an account?{" "}
                   <a
