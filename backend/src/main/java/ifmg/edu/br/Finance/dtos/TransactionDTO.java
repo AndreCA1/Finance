@@ -14,7 +14,6 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 
 public class TransactionDTO {
@@ -43,5 +42,16 @@ public class TransactionDTO {
         status = novo.getStatus();
         amount = novo.getAmount();
         userId = novo.getUser().getId();
+    }
+
+    // Construtor que traduz a str do BD para as constantes
+    public TransactionDTO(long id, Date date, String payee, String type, String status, Float amount, Long userId) {
+        this.id = id;
+        this.date = date;
+        this.payee = payee;
+        this.type = PaymentType.valueOf(type);
+        this.status = PaymentStatus.valueOf(status);
+        this.amount = amount;
+        this.userId = userId;
     }
 }
