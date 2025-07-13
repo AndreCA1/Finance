@@ -14,13 +14,55 @@ export default function Dashboard() {
     totalCashback: 0,
     totalInvestment: 0,
   });
+
+  const [anuary, setAnuary] = useState({
+    income: Array(12).fill(0),
+    totalSpent: Array(12).fill(0),
+    totalCashback: Array(12).fill(0),
+    totalInvestment: Array(12).fill(0),
+  });
+
   const token = localStorage.getItem("access_token");
   if (token) {
     const tokenDecoded = jwtDecode(token);
     userId = tokenDecoded.user_id;
   }
 
-  // useEffect para pegar o id do cliente
+  //useEffect para alterar grafico de barras BALANCE
+  useEffect(() => {
+    fetchJSData("http://localhost:8080/month/" + userId + "/all", token)
+      .then((data) => {
+        const months = data.content;
+
+        const incomeArray = Array(12).fill(0);
+        const spentArray = Array(12).fill(0);
+        const cashbackArray = Array(12).fill(0);
+        const investmentArray = Array(12).fill(0);
+
+        months.forEach((item) => {
+          const monthIndex = parseInt(item.date.split("-")[1], 10) - 1;
+          if (monthIndex >= 0 && monthIndex < 12) {
+            incomeArray[monthIndex] = item.income || 0;
+          }
+          incomeArray[monthIndex] = item.income || 0;
+          spentArray[monthIndex] = item.totalSpent || 0;
+          cashbackArray[monthIndex] = item.totalCashback || 0;
+          investmentArray[monthIndex] = item.totalInvestment || 0;
+        });
+
+        setAnuary({
+          income: incomeArray,
+          totalSpent: spentArray,
+          totalCashback: cashbackArray,
+          totalInvestment: investmentArray,
+        });
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar resumo financeiro", err);
+      });
+  }, [token, userId]);
+
+  // useEfect para setar os dados dos cards
   useEffect(() => {
     fetchJSData("http://localhost:8080/month/" + userId, token)
       .then((data) => {
@@ -58,6 +100,7 @@ export default function Dashboard() {
 
   // useEffect para os graficos com apexchart
   useEffect(() => {
+    if (!anuary.income || anuary.income.every((v) => v === 0)) return;
     const charts = [
       {
         selector: "#d2c_lineChart",
@@ -125,7 +168,7 @@ export default function Dashboard() {
           series: [
             {
               name: "Income",
-              data: [80, 85, 105, 100, 92, 80, 120, 102, 98, 45, 92, 82],
+              data: anuary.income,
             },
           ],
           colors: ["rgba(0, 170, 93, 0.7)"],
@@ -197,7 +240,7 @@ export default function Dashboard() {
           series: [
             {
               name: "Income",
-              data: [30, 50, 75, 40, 90, 80, 40, 52, 80, 45, 92, 30],
+              data: anuary.totalInvestment,
             },
           ],
           colors: ["rgba(0, 170, 93, 0.7)"],
@@ -225,7 +268,6 @@ export default function Dashboard() {
           },
         },
       },
-      // Você pode adicionar os demais charts aqui do mesmo modo...
     ];
 
     const chartInstances = [];
@@ -242,7 +284,7 @@ export default function Dashboard() {
     return () => {
       chartInstances.forEach((chart) => chart.destroy());
     };
-  }, []);
+  }, [anuary]);
   // useEffect para montar o tema salvo e os outros comportamentos (preloader, validação)
   useEffect(() => {
     // Recupera tema salvo no localStorage ao montar
@@ -288,7 +330,7 @@ export default function Dashboard() {
   };
 
   return (
-    <body className="d2c_theme_light">
+    <>
       {/* Preloader Start */}
       <div className="preloader">
         <img src="./assets/images/logo/logo-full.png" alt="DesignToCodes" />
@@ -1082,7 +1124,7 @@ export default function Dashboard() {
                 <ul className="navbar-nav">
                   {/* Item */}
                   <li className="nav-item">
-                    <a className="nav-link" href="#">
+                    <a className="nav-link" href="/">
                       <span className="d2c_icon text-danger">
                         <i className="fas fa-sign-out-alt"></i>
                       </span>
@@ -1702,6 +1744,6 @@ export default function Dashboard() {
         <i className="far fa-hand-point-right"></i>
       </button>
       {/* End:Offcanvas Toggler */}
-    </body>
+    </>
   );
 }
