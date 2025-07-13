@@ -17,16 +17,29 @@ public class CustomPasswordAuthenticationToken extends OAuth2AuthorizationGrantA
 	private final String username;
 	private final String password;
 	private final Set<String> scopes;
+	private final Long userId;
 	
+	//public CustomPasswordAuthenticationToken(Authentication clientPrincipal,
+	//		@Nullable Set<String> scopes, @Nullable Map<String, Object> additionalParameters) {
+	//
+	//	super(new AuthorizationGrantType("password"), clientPrincipal, additionalParameters);
+	//
+	//	this.username = (String) additionalParameters.get("username");
+	//	this.password = (String) additionalParameters.get("password");
+	//	this.scopes = Collections.unmodifiableSet(
+	//			scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
+	//}
+
 	public CustomPasswordAuthenticationToken(Authentication clientPrincipal,
-			@Nullable Set<String> scopes, @Nullable Map<String, Object> additionalParameters) {
-		
+											 @Nullable Set<String> scopes, @Nullable Map<String, Object> additionalParameters, Long userId) {
+
 		super(new AuthorizationGrantType("password"), clientPrincipal, additionalParameters);
-		
+
 		this.username = (String) additionalParameters.get("username");
 		this.password = (String) additionalParameters.get("password");
 		this.scopes = Collections.unmodifiableSet(
 				scopes != null ? new HashSet<>(scopes) : Collections.emptySet());
+		this.userId = userId;
 	}
 
 	public String getUsername() {
@@ -39,5 +52,9 @@ public class CustomPasswordAuthenticationToken extends OAuth2AuthorizationGrantA
 
 	public Set<String> getScopes() {
 		return this.scopes;
+	}
+
+	public Long getUserId() {
+		return userId;
 	}
 }

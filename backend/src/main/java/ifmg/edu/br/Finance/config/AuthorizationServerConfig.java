@@ -7,6 +7,7 @@ import com.nimbusds.jose.proc.SecurityContext;
 import ifmg.edu.br.Finance.config.customgrant.CustomPasswordAuthenticationConverter;
 import ifmg.edu.br.Finance.config.customgrant.CustomPasswordAuthenticationProvider;
 import ifmg.edu.br.Finance.config.customgrant.CustomUserAuthorities;
+import ifmg.edu.br.Finance.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -61,6 +62,9 @@ public class AuthorizationServerConfig {
 	private UserDetailsService userDetailsService;
 
 	@Autowired
+	private UserService userService;
+
+	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Bean
 	@Order(2)
@@ -71,7 +75,7 @@ public class AuthorizationServerConfig {
 		// @formatter:off
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 			.tokenEndpoint(tokenEndpoint -> tokenEndpoint
-				.accessTokenRequestConverter(new CustomPasswordAuthenticationConverter())
+				.accessTokenRequestConverter(new CustomPasswordAuthenticationConverter(userService))
 				.authenticationProvider(new CustomPasswordAuthenticationProvider(authorizationService(), tokenGenerator(), userDetailsService, passwordEncoder)));
 
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
@@ -151,6 +155,7 @@ public class AuthorizationServerConfig {
 			if (context.getTokenType().getValue().equals("access_token")) {
 				// @formatter:off
 				context.getClaims()
+						.claim("user_id", user.getId())
 					.claim("authorities", authorities)
 					.claim("username", user.getUsername());
 				// @formatter:on

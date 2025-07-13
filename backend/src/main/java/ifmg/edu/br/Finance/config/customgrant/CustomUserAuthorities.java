@@ -8,10 +8,17 @@ public class CustomUserAuthorities {
 
 	private String username;
 	private Collection<? extends GrantedAuthority> authorities;
+	private Long userId;
 
-	public CustomUserAuthorities(String username, Collection<? extends GrantedAuthority> authorities) {
+	//public CustomUserAuthorities(String username, Collection<? extends GrantedAuthority> authorities) {
+	//	this.username = username;
+	//	this.authorities = authorities;
+	//}
+
+	public CustomUserAuthorities(String username, Collection<? extends GrantedAuthority> authorities, Long userId) {
 		this.username = username;
 		this.authorities = authorities;
+		this.userId = userId;
 	}
 
 	public String getUsername() {
@@ -20,5 +27,9 @@ public class CustomUserAuthorities {
 
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
+	}
+
+	public Long getId() {
+		return userId;
 	}
 }
