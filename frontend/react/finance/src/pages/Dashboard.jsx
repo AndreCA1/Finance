@@ -1,8 +1,41 @@
 import React, { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import ApexCharts from "apexcharts";
+import { fetchJSData } from "../utils/api";
+import InfoCard from "../utils/InfoCard";
 
 export default function Dashboard() {
+  let userId = 0;
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+  const [summary, setSummary] = useState({
+    income: 0,
+    totalSpent: 0,
+    totalTransactions: 0,
+    totalCashback: 0,
+    totalInvestment: 0,
+  });
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    const tokenDecoded = jwtDecode(token);
+    userId = tokenDecoded.user_id;
+  }
+
+  // useEffect para pegar o id do cliente
+  useEffect(() => {
+    fetchJSData("http://localhost:8080/month/" + userId, token)
+      .then((data) => {
+        setSummary({
+          income: data.income,
+          totalSpent: data.totalSpent,
+          totalTransactions: data.totalTransactions,
+          totalCashback: data.totalCashback,
+          totalInvestment: data.totalInvestment,
+        });
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar resumo financeiro", err);
+      });
+  }, [token, userId]);
 
   // useEffect só para controlar o tema
   useEffect(() => {
@@ -1111,244 +1144,49 @@ export default function Dashboard() {
                 </div>
 
                 {/* Income Card */}
-                <div className="col-xl-4 col-md-6 mb-4">
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="row mb-3">
-                        <div className="col-8">
-                          <div className="btn rounded shadow text-primary">
-                            <i className="fas fa-dollar-sign"></i>
-                          </div>
-                        </div>
-                        <div className="col d-flex justify-content-end">
-                          <div className="dropdown">
-                            <button
-                              className="btn px-1 d2c_dropdown_btn"
-                              type="button"
-                              id="dropdownMenuButton11"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i className="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul
-                              className="dropdown-menu d2c_dropdown"
-                              aria-labelledby="dropdownMenuButton11"
-                            >
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Premium
-                                </a>
-                              </li>
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Regular
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <h6>Income</h6>
-                      <p>Last Month</p>
-
-                      <h4 className="text-primary mb-0">$24,977.05</h4>
-                    </div>
-                  </div>
-                </div>
+                <InfoCard
+                  title="Income"
+                  subtitle="Last Month"
+                  value={`$${(summary.income ?? 0).toLocaleString()}`}
+                  iconClass="fas fa-dollar-sign"
+                  textColor="text-primary"
+                />
 
                 {/* Total Spent */}
-                <div className="col-xl-4 col-md-6 mb-4">
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="row mb-3">
-                        <div className="col-8">
-                          <div className="btn rounded shadow text-primary">
-                            <i className="fas fa-dollar-sign"></i>
-                          </div>
-                        </div>
-                        <div className="col d-flex justify-content-end">
-                          <div className="dropdown">
-                            <button
-                              className="btn px-1 d2c_dropdown_btn"
-                              type="button"
-                              id="dropdownMenuButton11"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i className="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul
-                              className="dropdown-menu d2c_dropdown"
-                              aria-labelledby="dropdownMenuButton11"
-                            >
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Premium
-                                </a>
-                              </li>
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Regular
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <h6>Total Spent</h6>
-                      <p>Last Month</p>
-
-                      <h4 className="text-primary mb-0">$16,547.59</h4>
-                    </div>
-                  </div>
-                </div>
+                <InfoCard
+                  title="Total Spent"
+                  subtitle="Last Month"
+                  value={`$${(summary.totalSpent ?? 0).toLocaleString()}`}
+                  iconClass="fas fa-dollar-sign"
+                  textColor="text-primary"
+                />
 
                 {/* Transactions */}
-                <div className="col-xl-4 col-md-6 mb-4">
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="row mb-3">
-                        <div className="col-8">
-                          <div className="btn rounded shadow text-primary">
-                            <i className="fas fa-dollar-sign"></i>
-                          </div>
-                        </div>
-                        <div className="col d-flex justify-content-end">
-                          <div className="dropdown">
-                            <button
-                              className="btn px-1 d2c_dropdown_btn"
-                              type="button"
-                              id="dropdownMenuButton11"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i className="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul
-                              className="dropdown-menu d2c_dropdown"
-                              aria-labelledby="dropdownMenuButton11"
-                            >
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Premium
-                                </a>
-                              </li>
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Regular
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <h6>Transactions</h6>
-                      <p>Last Month</p>
-
-                      <h4 className="text-primary mb-0">$90,548.23</h4>
-                    </div>
-                  </div>
-                </div>
+                <InfoCard
+                  title="Transactions"
+                  subtitle="Last Month"
+                  value={`$${(summary.totalTransactions ?? 0).toLocaleString()}`}
+                  iconClass="fas fa-dollar-sign"
+                  textColor="text-primary"
+                />
 
                 {/* Total Cashback */}
-                <div className="col-xl-4 col-md-6 mb-4">
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="row mb-3">
-                        <div className="col-8">
-                          <div className="btn rounded shadow text-primary">
-                            <i className="fas fa-dollar-sign"></i>
-                          </div>
-                        </div>
-                        <div className="col d-flex justify-content-end">
-                          <div className="dropdown">
-                            <button
-                              className="btn px-1 d2c_dropdown_btn"
-                              type="button"
-                              id="dropdownMenuButton11"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i className="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul
-                              className="dropdown-menu d2c_dropdown"
-                              aria-labelledby="dropdownMenuButton11"
-                            >
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Premium
-                                </a>
-                              </li>
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Regular
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <h6>Total Cashback</h6>
-                      <p>Last Month</p>
-
-                      <h4 className="text-primary mb-0">$8,548.23</h4>
-                    </div>
-                  </div>
-                </div>
+                <InfoCard
+                  title="Total Cashback"
+                  subtitle="Last Month"
+                  value={`$${(summary.totalCashback ?? 0).toLocaleString()}`}
+                  iconClass="fas fa-dollar-sign"
+                  textColor="text-primary"
+                />
 
                 {/* Investment */}
-                <div className="col-xl-4 col-md-6 mb-4">
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="row mb-3">
-                        <div className="col-8">
-                          <div className="btn rounded shadow text-primary">
-                            <i className="fas fa-dollar-sign"></i>
-                          </div>
-                        </div>
-                        <div className="col d-flex justify-content-end">
-                          <div className="dropdown">
-                            <button
-                              className="btn px-1 d2c_dropdown_btn"
-                              type="button"
-                              id="dropdownMenuButton11"
-                              data-bs-toggle="dropdown"
-                              aria-expanded="false"
-                            >
-                              <i className="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul
-                              className="dropdown-menu d2c_dropdown"
-                              aria-labelledby="dropdownMenuButton11"
-                            >
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Premium
-                                </a>
-                              </li>
-                              <li>
-                                <a className="dropdown-item" href="#">
-                                  Regular
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <h6>Investment</h6>
-                      <p>Last Month</p>
-
-                      <h4 className="text-primary mb-0">$22,548.23</h4>
-                    </div>
-                  </div>
-                </div>
+                <InfoCard
+                  title="Investment"
+                  subtitle="Last Month"
+                  value={`$${(summary.totalInvestment ?? 0).toLocaleString()}`}
+                  iconClass="fas fa-dollar-sign"
+                  textColor="text-primary"
+                />
               </div>
             </div>
 
