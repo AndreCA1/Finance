@@ -49,7 +49,7 @@ public class TransactionService {
         }
     }
 
-    public Page<MonthDTO> searchTransactionsCurrentMonth(Long id, Pageable pageable){
+    public Page<TransactionDTO> searchTransactionsCurrentMonth(Long id, Pageable pageable){
         if(!transactionRepository.existsById(id)) {
             throw new ResourceNotFound("Transaction not found: " + id);
         }
@@ -60,7 +60,7 @@ public class TransactionService {
         }
     }
 
-    public Page<MonthDTO> searchTransactionsSpecificMonth(Long id, Pageable pageable, int month){
+    public Page<TransactionDTO> searchTransactionsSpecificMonth(Long id, Pageable pageable, int month){
         if(!transactionRepository.existsById(id)) {
             throw new ResourceNotFound("Transaction not found: " + id);
         }

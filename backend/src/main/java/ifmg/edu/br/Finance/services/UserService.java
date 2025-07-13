@@ -50,6 +50,18 @@ public class UserService implements UserDetailsService {
         return new UserDTO(user);
     }
 
+    @Transactional(readOnly = true)
+    public UserDTO findByUsername(String username) {
+        User opt = repository.findByEmail(username);
+        return new UserDTO(opt);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDetailsProjection searchUserAndRoleByEmail(String username) {
+        return repository.searchUserAndRoleByEmail(username).get(0);
+    }
+
+
     @Transactional
     public UserDTO insert(UserInsertDTO dto){
         User entity = new User();
