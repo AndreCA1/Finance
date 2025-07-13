@@ -92,8 +92,8 @@ public class TransactionResource {
                     @ApiResponse(description = "Forbidden", responseCode = "403"),
                     @ApiResponse(description = "NotFound", responseCode = "404")
             })
-    public ResponseEntity<Page<MonthDTO>> searchTransactionsCurrentMonth(@PathVariable Long id, Pageable pageable) {
-        Page<MonthDTO> page = transactionService.searchTransactionsCurrentMonth(id, pageable);
+    public ResponseEntity<Page<TransactionDTO>> searchTransactionsCurrentMonth(@PathVariable Long id, Pageable pageable) {
+        Page<TransactionDTO> page = transactionService.searchTransactionsCurrentMonth(id, pageable);
         return ResponseEntity.ok(page);
     }
 
@@ -109,8 +109,8 @@ public class TransactionResource {
                     @ApiResponse(description = "Forbidden", responseCode = "403"),
                     @ApiResponse(description = "NotFound", responseCode = "404")
             })
-    public ResponseEntity<Page<MonthDTO>> searchTransactionsSpecificMonth(@PathVariable Long id, Pageable pageable, @PathVariable int month) {
-        Page<MonthDTO> page = transactionService.searchTransactionsSpecificMonth(id, pageable, month);
+    public ResponseEntity<Page<TransactionDTO>> searchTransactionsSpecificMonth(@PathVariable Long id, Pageable pageable, @PathVariable int month) {
+        Page<TransactionDTO> page = transactionService.searchTransactionsSpecificMonth(id, pageable, month);
         return ResponseEntity.ok(page);
     }
 }
