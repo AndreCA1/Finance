@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ApexCharts from "apexcharts";
 
 export default function Dashboard() {
   const [isDarkTheme, setIsDarkTheme] = useState(true);
@@ -22,6 +23,193 @@ export default function Dashboard() {
     return () => clearTimeout(timeoutId);
   }, [isDarkTheme]);
 
+  // useEffect para os graficos com apexchart
+  useEffect(() => {
+    const charts = [
+      {
+        selector: "#d2c_lineChart",
+        options: {
+          series: [
+            {
+              name: "Desktops",
+              data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+            },
+          ],
+          chart: {
+            type: "line",
+            foreColor: "#ccc",
+            fontFamily: "Poppins, sans-serif",
+            toolbar: {
+              show: false,
+            },
+          },
+          colors: ["#FFC107"],
+          dataLabels: {
+            enabled: false,
+          },
+          markers: {
+            size: 5,
+          },
+          stroke: {
+            width: 2,
+            curve: "smooth",
+          },
+          grid: {
+            show: true,
+            borderColor: "rgba(56, 56, 56, 0.06)",
+            xaxis: {
+              lines: {
+                show: true,
+              },
+            },
+            yaxis: {
+              lines: {
+                show: true,
+              },
+            },
+          },
+          yaxis: {
+            labels: {
+              formatter: function (y) {
+                return y.toFixed(0) + "K";
+              },
+            },
+          },
+          xaxis: {
+            categories: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+          },
+        },
+      },
+      {
+        selector: "#d2c_barChart",
+        options: {
+          chart: {
+            type: "bar",
+            foreColor: "#ccc",
+            toolbar: { show: false },
+            fontFamily: "Poppins, sans-serif",
+          },
+          series: [
+            {
+              name: "Income",
+              data: [80, 85, 105, 100, 92, 80, 120, 102, 98, 45, 92, 82],
+            },
+          ],
+          colors: ["rgba(0, 170, 93, 0.7)"],
+          legend: { show: false },
+          dataLabels: { enabled: false },
+          yaxis: { labels: { formatter: (y) => `${y.toFixed(0)}K` } },
+          xaxis: {
+            categories: [
+              "Jan",
+              "Feb",
+              "Mar",
+              "Apr",
+              "May",
+              "Jun",
+              "Jul",
+              "Aug",
+              "Sep",
+              "Oct",
+              "Nov",
+              "Dec",
+            ],
+          },
+          plotOptions: {
+            bar: { horizontal: false, borderRadius: 3, barHeight: "70%" },
+          },
+        },
+      },
+      {
+        selector: "#d2c_dashboard_radialBarChart",
+        options: {
+          series: [44, 55, 67, 83],
+          chart: {
+            type: "radialBar",
+            foreColor: "#ccc",
+            fontFamily: "Poppins, sans-serif",
+          },
+          plotOptions: {
+            radialBar: {
+              dataLabels: {
+                name: { fontSize: "22px" },
+                value: { fontSize: "16px" },
+                total: { show: false, label: "Total", formatter: () => 249 },
+              },
+            },
+          },
+          labels: ["Apples", "Oranges", "Bananas", "Berries"],
+          colors: ["#00AA5D", "#383838", "#FFC107", "#EF4E4E"],
+        },
+      },
+      {
+        selector: "#d2c_dashboard_donutChart",
+        options: {
+          series: [25, 35, 25, 15],
+          chart: { type: "donut", foreColor: "rgba(56, 56, 56, 0.06)" },
+          colors: ["#FFC107", "#EF4E4E", "#00AA5D", "#383838"],
+          labels: ["Refund", "Margin", "Sale"],
+          legend: { show: false },
+        },
+      },
+      {
+        selector: "#d2c_investment_bar_chart",
+        options: {
+          chart: {
+            type: "bar",
+            foreColor: "#ccc",
+            toolbar: { show: false },
+            fontFamily: "Poppins, sans-serif",
+          },
+          series: [
+            {
+              name: "Income",
+              data: [30, 50, 75, 40, 90, 80, 40, 52, 80, 45, 92, 30],
+            },
+          ],
+          colors: ["rgba(0, 170, 93, 0.7)"],
+          legend: { show: false },
+          dataLabels: { enabled: false },
+          yaxis: { labels: { formatter: (y) => `${y.toFixed(0)}K` } },
+          xaxis: {
+            categories: [
+              "Jan",
+              "Feb",
+              "Mar",
+              "Apr",
+              "May",
+              "Jun",
+              "Jul",
+              "Aug",
+              "Sep",
+              "Oct",
+              "Nov",
+              "Dec",
+            ],
+          },
+          plotOptions: {
+            bar: { horizontal: false, borderRadius: 3, barHeight: "70%" },
+          },
+        },
+      },
+      // Você pode adicionar os demais charts aqui do mesmo modo...
+    ];
+
+    const chartInstances = [];
+
+    charts.forEach(({ selector, options }) => {
+      const el = document.querySelector(selector);
+      if (el) {
+        const chart = new ApexCharts(el, options);
+        chart.render();
+        chartInstances.push(chart); // guarda para destruição
+      }
+    });
+
+    return () => {
+      chartInstances.forEach((chart) => chart.destroy());
+    };
+  }, []);
   // useEffect para montar o tema salvo e os outros comportamentos (preloader, validação)
   useEffect(() => {
     // Recupera tema salvo no localStorage ao montar
@@ -1340,20 +1528,6 @@ export default function Dashboard() {
                 </div>
               </div>
               {/* End:investment */}
-            </div>
-
-            <div className="col-xl-6 mb-4">
-              {/* Balance */}
-              <div className="card">
-                <div className="card-header">
-                  <h6>Stock Watch list</h6>
-                  <h4 className="text-primary">$8,537.48</h4>
-                </div>
-                <div className="card-body">
-                  <div id="d2c_areaChart"></div>
-                </div>
-              </div>
-              {/* End:Balance */}
             </div>
           </div>
 
