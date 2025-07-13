@@ -12,22 +12,24 @@ import org.springframework.stereotype.Repository;
 public interface MonthRepository extends JpaRepository<Month, Long> {
     @Query(nativeQuery = true,
             value = """
-                    select  m.date,
-                            m.income,
-                            m.totalSpent,
-                            m.totalTransactions,
-                            m.totalCashback,
-                            m.totalInvestment,
-                            m.user_id as UserId
+                    select  
+                    m.id,
+                    m.date,
+                    m.income,
+                    m.totalSpent,
+                    m.totalTransactions,
+                    m.totalCashback,
+                    m.totalInvestment,
+                    m.user_id
                     from 
                         tb_month m
                     where 
                         m.user_id = :UserId
-                            AND m.date >= DATE_SUB(DATE_FORMAT(CURDATE(), '%Y-%m-01'), INTERVAL 11 MONTH)
+                        AND YEAR(m.date) = YEAR(CURDATE())
                     ORDER BY m.date;	
                    """
     )
-    Page<MonthDTO> searchLast12MonthsByUserId(Long UserId, Pageable pageable);
+    Page<MonthDTO> searchAllMonthsReceipt(Long UserId, Pageable pageable);
 
     @Query(
             value = """
