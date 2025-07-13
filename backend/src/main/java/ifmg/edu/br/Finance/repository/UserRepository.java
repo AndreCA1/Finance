@@ -18,7 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     SELECT u.email as UserEmail,
                            u.password,
                            r.id as RoleId,
-                           r.authority
+                           r.authority,
+                           u.id as UserId 
                     FROM tb_user u 
                         INNER JOIN tb_user_role ur 
                                 ON u.id = ur.user_id 

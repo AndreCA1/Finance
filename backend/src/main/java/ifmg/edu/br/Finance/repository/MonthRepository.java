@@ -28,4 +28,24 @@ public interface MonthRepository extends JpaRepository<Month, Long> {
                    """
     )
     Page<MonthDTO> searchLast12MonthsByUserId(Long UserId, Pageable pageable);
+
+    @Query(
+            value = """
+            SELECT
+                m.id,
+                m.date,
+                m.income,
+                m.totalSpent,
+                m.totalTransactions,
+                m.totalCashback,
+                m.totalInvestment,
+                m.user_id
+            FROM tb_month m
+            WHERE MONTH(m.date) = MONTH(CURDATE())
+              AND m.user_id = :userId
+            ORDER BY m.date
+           """,
+            nativeQuery = true
+    )
+    MonthDTO searchCurrentMonthReceipt(Long userId);
 }
