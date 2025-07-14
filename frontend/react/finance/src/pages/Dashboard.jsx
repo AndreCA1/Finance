@@ -3,9 +3,40 @@ import { jwtDecode } from "jwt-decode";
 import ApexCharts from "apexcharts";
 import { fetchJSData } from "../utils/api";
 import InfoCard from "../utils/InfoCard";
+import Table from "../utils/Table";
 
 export default function Dashboard() {
   let userId = 0;
+
+  // Tabela final
+  const tableHeaders = [
+    { key: "date", label: "Date", minWidth: "170px" },
+    { key: "payee", label: "Customer" },
+    { key: "type", label: "Group Name" },
+    {
+      key: "status",
+      label: "Payment Type",
+      render: (value) => {
+        let className = "";
+        if (value === "CARD") className = "text-warning";
+        else if (value === "PAID") className = "text-success";
+        else if (value === "UNPAID") className = "text-danger";
+
+        return <span className={className}>{value}</span>;
+      },
+    },
+    { key: "amount", label: "Amount" },
+  ];
+  const [tableData, setTableData] = useState([
+    {
+      date: "",
+      payee: "",
+      type: "",
+      status: "",
+      amount: 0,
+    },
+  ]);
+  //
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   const [summary, setSummary] = useState({
     income: 0,
@@ -15,6 +46,7 @@ export default function Dashboard() {
     totalInvestment: 0,
   });
 
+  //TODO: Mudar isso de acordo com os gráficos a serem usados
   const [anuary, setAnuary] = useState({
     income: Array(12).fill(0),
     totalSpent: Array(12).fill(0),
@@ -27,6 +59,27 @@ export default function Dashboard() {
     const tokenDecoded = jwtDecode(token);
     userId = tokenDecoded.user_id;
   }
+
+  //useEffect para dados da tabela ao final
+  useEffect(() => {
+    fetchJSData("http://localhost:8080/transaction/" + userId + "/month", token)
+      .then((data) => {
+        const trans = data.content;
+
+        setTableData(
+          trans.map((item) => ({
+            date: item.date || "",
+            payee: item.payee || "",
+            type: item.type || "",
+            status: item.status || "",
+            amount: item.amount || 0,
+          })),
+        );
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar resumo financeiro", err);
+      });
+  }, [token, userId]);
 
   //useEffect para alterar grafico de barras BALANCE
   useEffect(() => {
@@ -1414,318 +1467,7 @@ export default function Dashboard() {
           <div className="row">
             <div className="col-md-12 mb-4">
               {/* Basic Table */}
-              <div className="card h-auto d2c_projects_datatable">
-                <div className="card-header">
-                  <h6>Advance Table</h6>
-                </div>
-                <div className="card-body">
-                  <div className="table-responsive">
-                    <table className="table" id="d2c_advanced_table">
-                      <thead>
-                        <tr>
-                          <th style={{ minWidth: "170px" }}>Date</th>
-                          <th style={{ minWidth: "170px" }}>Customer</th>
-                          <th style={{ minWidth: "130px" }}>Group Name</th>
-                          <th style={{ minWidth: "130px" }}>Voucher</th>
-                          <th style={{ minWidth: "130px" }}>Payment Type</th>
-                          <th style={{ minWidth: "130px" }}>Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                20 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Jane Cooper</td>
-                          <td>Supplier</td>
-                          <td>58755</td>
-                          <td className="text-warning">Pending</td>
-                          <td>$4,323.39</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                19 Jan 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Alex Cooper</td>
-                          <td>Vendor</td>
-                          <td>58723</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$2,432.39</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                16 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Hales Jane</td>
-                          <td>Customer</td>
-                          <td>58712</td>
-                          <td className="text-danger">Unpaid</td>
-                          <td>$1,582.87</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                23 Jun 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Maria D</td>
-                          <td>Supplier</td>
-                          <td>34755</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$5,582.45</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                12 Aug 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Robert Mon</td>
-                          <td>Customer</td>
-                          <td>67755</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$6,546.32</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                11 May 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Brian Depew</td>
-                          <td>Vendor</td>
-                          <td>28755</td>
-                          <td className="text-warning">Pending</td>
-                          <td>$3,582.6</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                {" "}
-                                6 Oct 2023{" "}
-                              </label>
-                            </div>
-                          </td>
-                          <td>James Murray</td>
-                          <td>Customer</td>
-                          <td>11755</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$8,432.56</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                10 Oct 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Alex Carey</td>
-                          <td>Vendor</td>
-                          <td>88755</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$1,321.34</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                29 Oct 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Jane Cooper</td>
-                          <td>Vendor</td>
-                          <td>56735</td>
-                          <td className="text-danger">Unpaid</td>
-                          <td>$6,453.66</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                27 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Gary Nunez</td>
-                          <td>Vendor</td>
-                          <td>45637</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$3,321.54</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                26 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>James Bowes</td>
-                          <td>Customer</td>
-                          <td>90876</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$4,582.39</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                25 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>David Sankey</td>
-                          <td>Expenses</td>
-                          <td>33425</td>
-                          <td className="text-warning">Pending</td>
-                          <td>$4,582.39</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                24 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Paul Clark</td>
-                          <td>Vendor</td>
-                          <td>33445</td>
-                          <td className="text-warning">Pending</td>
-                          <td>$4,582.39</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                23 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Matt Cogdell</td>
-                          <td>Customer</td>
-                          <td>33332</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$4,582.39</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                20 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Bill Blevins</td>
-                          <td>Vendor</td>
-                          <td>55565</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$4,582.39</td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <div className="form-check">
-                              <input
-                                className="form-check-input"
-                                type="checkbox"
-                              />
-                              <label className="form-check-label">
-                                21 Mar 2023
-                              </label>
-                            </div>
-                          </td>
-                          <td>Joseph Dole</td>
-                          <td>Supplier</td>
-                          <td>88998</td>
-                          <td className="text-success">Delivered</td>
-                          <td>$4,582.39</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
+              <Table columns={tableHeaders} data={tableData} />
               {/* End:Advanced Table */}
             </div>
           </div>
