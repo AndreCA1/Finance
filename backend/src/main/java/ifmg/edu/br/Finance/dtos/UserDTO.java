@@ -25,7 +25,6 @@ public class UserDTO {
     private String name;
     @NotBlank(message = "Campo obrigatório")
     private String email;
-    @NotBlank(message = "Campo obrigatório")
     private Set<RoleDTO> roles;
 
     public UserDTO(User entity) {

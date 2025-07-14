@@ -378,9 +378,7 @@ body::selection {
 }
 
 .d2c_sidebar .navbar-nav {
-  padding: 0;
-  overflow-y: auto;
-  scroll-behavior: smooth;
+  behavior: smooth;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

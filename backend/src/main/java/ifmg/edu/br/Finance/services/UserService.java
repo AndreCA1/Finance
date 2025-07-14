@@ -9,6 +9,7 @@ import ifmg.edu.br.Finance.projections.UserDetailsProjection;
 import ifmg.edu.br.Finance.repository.RoleRepository;
 import ifmg.edu.br.Finance.repository.UserRepository;
 import ifmg.edu.br.Finance.services.exceptions.DataBaseException;
+import ifmg.edu.br.Finance.services.exceptions.EmailException;
 import ifmg.edu.br.Finance.services.exceptions.ResourceNotFound;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +65,18 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public UserDTO insert(UserInsertDTO dto){
+
+        User test = repository.findByEmail(dto.getEmail());
+        if(test != null) throw new EmailException("Email already registered");
+
         User entity = new User();
 
         copyDtoToEntity(dto, entity);
 
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        entity.getRoles().clear();
+        entity.addRole(roleRepository.getReferenceById(1L));
 
         User novo = repository.save(entity);
 
@@ -123,10 +131,11 @@ public class UserService implements UserDetailsService {
         entity.setEmail(dto.getEmail());
 
         entity.getRoles().clear();
-        for(RoleDTO role : dto.getRoles()){
-            //get verifica se a role existe no bd, mais rapido que o findById
-            Role roleEntity = roleRepository.getReferenceById(role.getId());
-            entity.getRoles().add(roleEntity);
+        if (dto.getRoles() != null){
+            for (RoleDTO r : dto.getRoles()){
+                Role role = roleRepository.getReferenceById(r.getId());
+                entity.addRole(role);
+            }
         }
     }
 }

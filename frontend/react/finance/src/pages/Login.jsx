@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -37,12 +38,12 @@ export default function Login() {
           // Redirecionar para outra página
           window.location.href = "/dashboard";
         } else {
-          alert("Token não recebido");
+          toast.error("Token não recebido");
         }
       })
       .catch((err) => {
         console.error(err);
-        alert("Erro no login");
+        toast.error("Erro no login: " + err);
       });
   };
 
@@ -107,21 +108,6 @@ export default function Login() {
                   </div>
                 </div>
                 <div className="row mb-3">
-                  <div className="col">
-                    <div className="form-check">
-                      <input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="exampleCheck1"
-                      />
-                      <label
-                        className="form-check-label text-muted"
-                        htmlFor="exampleCheck1"
-                      >
-                        Remember Me
-                      </label>
-                    </div>
-                  </div>
                   <div className="col text-end ps-0">
                     <a
                       href="/forgetPassword"
@@ -140,14 +126,6 @@ export default function Login() {
                   </button>
                 </div>
               </form>
-              <button className="d2c_link_btn btn w-100 d-flex align-items-center justify-content-center text-capitalize">
-                <img
-                  src="/assets/images/google.png"
-                  className="me-2"
-                  alt="google image"
-                />
-                Sign in With Google
-              </button>
             </div>
           </div>
         </div>

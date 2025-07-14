@@ -1,6 +1,11 @@
 package ifmg.edu.br.Finance.services;
 
-import ifmg.edu.br.Finance.dtos.MonthDTO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import ifmg.edu.br.Finance.dtos.TransactionDTO;
 import ifmg.edu.br.Finance.entities.Transaction;
 import ifmg.edu.br.Finance.entities.User;
@@ -8,14 +13,6 @@ import ifmg.edu.br.Finance.repository.TransactionRepository;
 import ifmg.edu.br.Finance.services.exceptions.DataBaseException;
 import ifmg.edu.br.Finance.services.exceptions.ResourceNotFound;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class TransactionService {
