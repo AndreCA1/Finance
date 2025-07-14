@@ -80,5 +80,6 @@ public class TransactionService {
 
         User userEntity = new User();
         userEntity.setId(dto.getUserId());
+        entity.setUser(userEntity);
     }
 }

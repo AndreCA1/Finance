@@ -4,7 +4,12 @@ import ifmg.edu.br.Finance.costants.PaymentStatus;
 import ifmg.edu.br.Finance.costants.PaymentType;
 import ifmg.edu.br.Finance.entities.Transaction;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,18 +25,23 @@ public class TransactionDTO {
     @Schema(description = "Database generated ID Month")
     @EqualsAndHashCode.Include
     private long id;
-    @NotBlank(message = "Campo obrigatório")
+    @NotNull(message = "Campo obrigatório")
     private Date date;
 
     @NotBlank(message = "Campo obrigatório")
     private String payee;
-    @NotBlank(message = "Campo obrigatório")
+    @NotNull(message = "Campo obrigatório")
+    @Enumerated(EnumType.STRING)
     private PaymentType type;
-    @NotBlank(message = "Campo obrigatório")
+    @NotNull(message = "Campo obrigatório")
+    @Enumerated(EnumType.STRING)
     private PaymentStatus status;
-    @NotBlank(message = "Campo obrigatório")
+    @NotNull(message = "Campo obrigatório")
+    @Positive(message = "Deve ser positivo")
     private Float amount;
 
+    @NotNull(message = "Campo obrigatório")
+    @Positive(message = "Deve ser positivo")
     private Long userId;
 
     public TransactionDTO(Transaction novo) {

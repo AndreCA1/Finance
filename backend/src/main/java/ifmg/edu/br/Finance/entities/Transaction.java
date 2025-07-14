@@ -26,7 +26,9 @@ public class Transaction {
 
     private Date date;
     private String payee;
+    @Enumerated(EnumType.STRING)
     private PaymentType type;
+    @Enumerated(EnumType.STRING)
     private PaymentStatus status;
     private Float amount;
 
