@@ -5,16 +5,55 @@ import { fetchJSData } from "../utils/api";
 import InfoCard from "../utils/InfoCard";
 import Table from "../utils/Table";
 import CreateTransactionModal from "./modals/CreateTransaction";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   let userId = 0;
 
-  //modal para transações
-  const [showModal, setShowModal] = useState(false);
+  //DECODE TOKEN TO GET USERID
+  const token = localStorage.getItem("access_token");
+  if (token) {
+    const tokenDecoded = jwtDecode(token);
+    userId = tokenDecoded.user_id;
+  }
 
-  const handleNewTransaction = (data) => {
-    console.log("Nova transação:", data);
-    // Aqui você pode fazer um POST para a API
+  //useStates para recarregar especificos
+  const [transactions, setTransactions] = useState([]);
+
+  //modal para transações
+  const [showModalTransiction, setshowModalTransiction] = useState(false);
+
+  const handleNewTransaction = async (data) => {
+    const formated = {
+      date: data.date,
+      payee: data.customerName,
+      type: data.actionType,
+      status: data.paymentStatus,
+      amount: data.amount,
+      userId: userId,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/transaction", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formated),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao enviar transação");
+      }
+
+      const result = await response.json();
+      setTransactions((prev) => [...prev, result]);
+      setshowModalTransiction(false);
+      toast.success("Transação enviada com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao enviar transação: " + error.message);
+    }
   };
   //
 
@@ -83,12 +122,6 @@ export default function Dashboard() {
     totalCashback: Array(12).fill(0),
     totalInvestment: Array(12).fill(0),
   });
-
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    const tokenDecoded = jwtDecode(token);
-    userId = tokenDecoded.user_id;
-  }
 
   //useEffect para dados da tabela ao final
   useEffect(() => {
@@ -1275,6 +1308,7 @@ export default function Dashboard() {
                   value={summary.income ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
+                  onOpenModal={() => setshowModalTransiction(true)}
                 />
 
                 {/* Total Spent */}
@@ -1496,23 +1530,20 @@ export default function Dashboard() {
 
           <div className="row">
             <div className="col-md-12 mb-4">
-              <button
-                className="btn btn-success"
-                onClick={() => setShowModal(true)}
-              >
-                Nova Transação
-              </button>
               {/* Basic Table */}
               <Table columns={tableHeaders} data={tableData} />
               {/* End:Advanced Table */}
             </div>
           </div>
 
+          {/*Modals*/}
           <CreateTransactionModal
-            isOpen={showModal}
-            onClose={() => setShowModal(false)}
+            isOpen={showModalTransiction}
+            onClose={() => setshowModalTransiction(false)}
             onSubmit={handleNewTransaction}
           />
+
+          {/*END Modals*/}
         </div>
         {/* End:Main Body */}
       </div>

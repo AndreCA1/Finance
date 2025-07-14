@@ -4,6 +4,7 @@ export default function InfoCard({
   value,
   iconClass,
   textColor = "text-primary",
+  onOpenModal,
 }) {
   const formattedValue =
     typeof value === "number"
@@ -24,32 +25,9 @@ export default function InfoCard({
               </div>
             </div>
             <div className="col d-flex justify-content-end">
-              <div className="dropdown">
-                <button
-                  className="btn px-1 d2c_dropdown_btn"
-                  type="button"
-                  id="dropdownMenuButton11"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i className="fas fa-ellipsis-v"></i>
-                </button>
-                <ul
-                  className="dropdown-menu d2c_dropdown"
-                  aria-labelledby="dropdownMenuButton11"
-                >
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Premium
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      Regular
-                    </a>
-                  </li>
-                </ul>
-              </div>
+              <button className="btn btn-success" onClick={onOpenModal}>
+                +
+              </button>
             </div>
           </div>
 

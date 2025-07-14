@@ -121,8 +121,8 @@ export default function CreateTransactionModal({ isOpen, onClose, onSubmit }) {
                     >
                       <option value="">Selecione</option>
                       <option value="INVESTMENT">Investimento</option>
-                      <option value="PAYMENT">Pagamento</option>
-                      <option value="RECEIPT">Recebimento</option>
+                      <option value="SPENT">Gasto</option>
+                      <option value="CASHBACK">Cashback</option>
                     </select>
                   </div>
 
