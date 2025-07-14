@@ -1,6 +1,6 @@
 .modal-overlay {
   position: fixed;
-  inset: 0; /* top:0; right:0; bottom:0; left:0; */
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -15,12 +15,28 @@
   opacity: 0 !important;
 }
 
+/* Modal com slide + fade */
+
+.modal {
+  opacity: 0;
+  transform: translateY(-30px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
 .modal.fade-in {
   opacity: 1 !important;
-  transition: opacity 0.3s ease;
+  transform: translateY(0);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .modal.fade-out {
   opacity: 0 !important;
-  transition: opacity 0.3s ease;
+  transform: translateY(-30px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
