@@ -25,7 +25,15 @@ export default function Dashboard() {
         return <span className={className}>{value}</span>;
       },
     },
-    { key: "amount", label: "Amount" },
+    {
+      label: "Amount",
+      key: "amount",
+      render: (value) =>
+        new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(value),
+    },
   ];
   const [tableData, setTableData] = useState([
     {
@@ -1242,7 +1250,7 @@ export default function Dashboard() {
                 <InfoCard
                   title="Income"
                   subtitle="Last Month"
-                  value={`$${(summary.income ?? 0).toLocaleString()}`}
+                  value={summary.income ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
                 />
@@ -1251,7 +1259,7 @@ export default function Dashboard() {
                 <InfoCard
                   title="Total Spent"
                   subtitle="Last Month"
-                  value={`$${(summary.totalSpent ?? 0).toLocaleString()}`}
+                  value={summary.totalSpent ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
                 />
@@ -1260,7 +1268,7 @@ export default function Dashboard() {
                 <InfoCard
                   title="Transactions"
                   subtitle="Last Month"
-                  value={`$${(summary.totalTransactions ?? 0).toLocaleString()}`}
+                  value={summary.totalTransactions ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
                 />
@@ -1269,7 +1277,7 @@ export default function Dashboard() {
                 <InfoCard
                   title="Total Cashback"
                   subtitle="Last Month"
-                  value={`$${(summary.totalCashback ?? 0).toLocaleString()}`}
+                  value={summary.totalCashback ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
                 />
@@ -1278,7 +1286,7 @@ export default function Dashboard() {
                 <InfoCard
                   title="Investment"
                   subtitle="Last Month"
-                  value={`$${(summary.totalInvestment ?? 0).toLocaleString()}`}
+                  value={summary.totalInvestment ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
                 />

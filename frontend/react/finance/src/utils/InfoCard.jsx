@@ -5,6 +5,14 @@ export default function InfoCard({
   iconClass,
   textColor = "text-primary",
 }) {
+  const formattedValue =
+    typeof value === "number"
+      ? new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(value)
+      : value;
+
   return (
     <div className="col-xl-4 col-md-6 mb-4">
       <div className="card">
@@ -47,7 +55,7 @@ export default function InfoCard({
 
           <h6>{title}</h6>
           <p>{subtitle}</p>
-          <h4 className={`${textColor} mb-0`}>{value}</h4>
+          <h4 className={`${textColor} mb-0`}>{formattedValue}</h4>
         </div>
       </div>
     </div>
