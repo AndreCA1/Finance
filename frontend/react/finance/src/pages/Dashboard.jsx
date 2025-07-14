@@ -4,13 +4,35 @@ import ApexCharts from "apexcharts";
 import { fetchJSData } from "../utils/api";
 import InfoCard from "../utils/InfoCard";
 import Table from "../utils/Table";
+import CreateTransactionModal from "./modals/CreateTransaction";
 
 export default function Dashboard() {
   let userId = 0;
 
+  //modal para transações
+  const [showModal, setShowModal] = useState(false);
+
+  const handleNewTransaction = (data) => {
+    console.log("Nova transação:", data);
+    // Aqui você pode fazer um POST para a API
+  };
+  //
+
   // Tabela final
   const tableHeaders = [
-    { key: "date", label: "Date", minWidth: "170px" },
+    {
+      key: "date",
+      label: "Date",
+      minWidth: "170px",
+      render: (value) => {
+        if (!value) return "";
+        const date = new Date(value);
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+      },
+    },
     { key: "payee", label: "Customer" },
     { key: "type", label: "Group Name" },
     {
@@ -1474,11 +1496,23 @@ export default function Dashboard() {
 
           <div className="row">
             <div className="col-md-12 mb-4">
+              <button
+                className="btn btn-success"
+                onClick={() => setShowModal(true)}
+              >
+                Nova Transação
+              </button>
               {/* Basic Table */}
               <Table columns={tableHeaders} data={tableData} />
               {/* End:Advanced Table */}
             </div>
           </div>
+
+          <CreateTransactionModal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            onSubmit={handleNewTransaction}
+          />
         </div>
         {/* End:Main Body */}
       </div>
