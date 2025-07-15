@@ -21,10 +21,18 @@ public class Month {
     private Date date;
 
     private Float income;
-    private Float totalSpent;
-    private Float totalTransactions;
+    @Column(name = "total_cashback")
     private Float totalCashback;
+
+    @Column(name = "total_spent")
+    private Float totalSpent;
+
+    @Column(name = "total_transactions")
+    private Float totalTransactions;
+
+    @Column(name = "total_investment")
     private Float totalInvestment;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")

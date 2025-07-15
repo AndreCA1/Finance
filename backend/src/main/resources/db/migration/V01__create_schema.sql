@@ -22,10 +22,10 @@ CREATE TABLE tb_month (
          id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
          date DATE,
          income FLOAT,
-         totalSpent FLOAT,
-         totalTransactions FLOAT,
-         totalCashback FLOAT,
-         totalInvestment FLOAT,
+         total_spent FLOAT,
+         total_transactions FLOAT,
+         total_cashback FLOAT,
+         total_investment FLOAT,
          user_id BIGINT,
          FOREIGN KEY (user_id) REFERENCES tb_user(id) ON DELETE SET NULL
 );

@@ -10,8 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.util.List;
+
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+
+    List<Transaction> findByUserIdAndDateBetween(Long userId, Date start, Date end);
+
     @Query(value = """
             SELECT
                 t.id,
