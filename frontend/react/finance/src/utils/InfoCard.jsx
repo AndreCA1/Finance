@@ -4,7 +4,6 @@ export default function InfoCard({
   value,
   iconClass,
   textColor = "text-primary",
-  onOpenModal,
 }) {
   const formattedValue =
     typeof value === "number"
@@ -23,11 +22,6 @@ export default function InfoCard({
               <div className={`btn rounded shadow ${textColor}`}>
                 <i className={iconClass}></i>
               </div>
-            </div>
-            <div className="col d-flex justify-content-end">
-              <button className="btn btn-success" onClick={onOpenModal}>
-                +
-              </button>
             </div>
           </div>
 

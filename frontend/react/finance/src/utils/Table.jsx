@@ -3,9 +3,6 @@ import React from "react";
 export default function Table({ columns, data }) {
   return (
     <div className="card h-auto">
-      <div className="card-header">
-        <h6>Transactions</h6>
-      </div>
       <div className="card-body">
         <div className="table-responsive">
           <table className="table">

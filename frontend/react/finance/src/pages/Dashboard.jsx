@@ -17,6 +17,12 @@ export default function Dashboard() {
     userId = tokenDecoded.user_id;
   }
 
+  //useStates dos cards
+  const [income, setIncome] = useState(0);
+  const [spent, setSpent] = useState(0);
+  const [cashback, setCashback] = useState(0);
+  const [investment, setInvestment] = useState(0);
+
   //useStates para recarregar especificos
   const [reload, setReload] = useState(0);
 
@@ -48,12 +54,23 @@ export default function Dashboard() {
       }
 
       const result = await response.json();
-      setTransactions((prev) => [...prev, result]);
+      setTableData((prev) => [...prev, result]);
+      
+      if (formated.type === "INCOME") {
+        setIncome((prev) => prev + formated.amount);
+      } else if (formated.type === "SPENT") {
+        setSpent((prev) => prev + formated.amount);
+      } else if (formated.type === "CASHBACK") {
+        setCashback((prev) => prev + formated.amount);
+      } else if (formated.type === "INVESTMENT") {
+        setInvestment((prev) => prev + formated.amount);
+      }
+
       setshowModalTransiction(false);
       setReload((prev) => prev + 1);
       toast.success("Transação enviada com sucesso!");
     } catch (error) {
-      toast.error("Erro ao enviar transação: " + error.message);
+      toast.error("Erro ao atualizar useState: " + error.message);
     }
   };
   //
@@ -470,7 +487,6 @@ export default function Dashboard() {
                   value={summary.income ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
-                  onOpenModal={() => setshowModalTransiction(true)}
                 />
 
                 {/* Total Spent */}
@@ -546,6 +562,15 @@ export default function Dashboard() {
           <div className="row">
             <div className="col-md-12 mb-4">
               {/* Basic Table */}
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="mb-0">Transactions</h5>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setshowModalTransiction(true)}
+                >
+                  <i className="fas fa-plus"></i> Add
+                </button>
+              </div>
               <Table columns={tableHeaders} data={tableData} />
               {/* End:Advanced Table */}
             </div>

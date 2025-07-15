@@ -26,8 +26,9 @@ export default function CreateTransactionModal({ isOpen, onClose, onSubmit }) {
   };
 
   const handleSubmit = (e) => {
+    console.log("SUBMIT - PREVENTING DEFAULT");
     e.preventDefault();
-    onSubmit(formData);
+
     onClose();
     setFormData({
       date: "",
@@ -36,6 +37,8 @@ export default function CreateTransactionModal({ isOpen, onClose, onSubmit }) {
       paymentStatus: "",
       amount: "",
     });
+
+    onSubmit(formData);
   };
 
   if (!visible) return null;
@@ -120,6 +123,7 @@ export default function CreateTransactionModal({ isOpen, onClose, onSubmit }) {
                       required
                     >
                       <option value="">Selecione</option>
+                      <option value="INCOME">Income</option>
                       <option value="INVESTMENT">Investimento</option>
                       <option value="SPENT">Gasto</option>
                       <option value="CASHBACK">Cashback</option>
