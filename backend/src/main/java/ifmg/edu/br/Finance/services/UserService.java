@@ -59,7 +59,11 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserDetailsProjection searchUserAndRoleByEmail(String username) {
-        return repository.searchUserAndRoleByEmail(username).get(0);
+        List<UserDetailsProjection> result = repository.searchUserAndRoleByEmail(username);
+        if (result.isEmpty()) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+        return result.get(0);
     }
 
 

@@ -62,7 +62,7 @@ public class UserResource {
         return ResponseEntity.ok(user);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "/name/{id}", produces = "application/json")
     @Operation(
             description = "Find user name by ID",
