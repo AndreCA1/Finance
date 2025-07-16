@@ -10,18 +10,30 @@ import { toast } from "react-toastify";
 export default function Dashboard() {
   let userId = 0;
 
+  //consts
+  //tema
+  const [isDarkTheme, setIsDarkTheme] = useState(true);
+  //sumario para cards
+  const [summary, setSummary] = useState({
+    income: 0,
+    totalSpent: 0,
+    totalTransactions: 0,
+    totalCashback: 0,
+    totalInvestment: 0,
+  });
+
+  //anuario para graficos
+  const [anuary, setAnuary] = useState({
+    income: Array(12).fill(0),
+    totalInvestment: Array(12).fill(0),
+  });
+
   //DECODE TOKEN TO GET USERID
   const token = localStorage.getItem("access_token");
   if (token) {
     const tokenDecoded = jwtDecode(token);
     userId = tokenDecoded.user_id;
   }
-
-  //useStates dos cards
-  const [income, setIncome] = useState(0);
-  const [spent, setSpent] = useState(0);
-  const [cashback, setCashback] = useState(0);
-  const [investment, setInvestment] = useState(0);
 
   //useStates para recarregar especificos
   const [reload, setReload] = useState(0);
@@ -55,16 +67,6 @@ export default function Dashboard() {
 
       const result = await response.json();
       setTableData((prev) => [...prev, result]);
-      
-      if (formated.type === "INCOME") {
-        setIncome((prev) => prev + formated.amount);
-      } else if (formated.type === "SPENT") {
-        setSpent((prev) => prev + formated.amount);
-      } else if (formated.type === "CASHBACK") {
-        setCashback((prev) => prev + formated.amount);
-      } else if (formated.type === "INVESTMENT") {
-        setInvestment((prev) => prev + formated.amount);
-      }
 
       setshowModalTransiction(false);
       setReload((prev) => prev + 1);
@@ -74,7 +76,6 @@ export default function Dashboard() {
     }
   };
   //
-
   // Tabela final
   const tableHeaders = [
     {
@@ -123,27 +124,58 @@ export default function Dashboard() {
       amount: 0,
     },
   ]);
-  //
-  const [isDarkTheme, setIsDarkTheme] = useState(true);
-  const [summary, setSummary] = useState({
-    income: 0,
-    totalSpent: 0,
-    totalTransactions: 0,
-    totalCashback: 0,
-    totalInvestment: 0,
+  
+  const [selectedMonth, setSelectedMonth] = useState("");
+  const [filters, setFilters] = useState({
+    payee: "",
+    type: "",
+    status: "",
   });
 
-  //TODO: Mudar isso de acordo com os gráficos a serem usados
-  const [anuary, setAnuary] = useState({
-    income: Array(12).fill(0),
-    totalSpent: Array(12).fill(0),
-    totalCashback: Array(12).fill(0),
-    totalInvestment: Array(12).fill(0),
+  const handleFilterChange = (key, value) => {
+    if (key === "date") {
+      // Atualiza o selectedMonth com o valor selecionado ("" ou 1-12)
+      setSelectedMonth(value === "" ? "" : Number(value));
+    }
+
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  // filtro de dados
+  const filteredData = tableData.filter((row) => {
+    return Object.keys(filters).every((key) => {
+      if (key === "date") return true;
+
+      const filterValue = filters[key].toLowerCase();
+      const cellValue = (row[key] || "").toString().toLowerCase();
+
+      if (!filterValue) return true;
+
+      if (key === "status" || key === "type") {
+        return cellValue === filterValue;
+      }
+
+      return cellValue.includes(filterValue);
+    });
   });
 
   //useEffect para dados da tabela ao final
   useEffect(() => {
-    fetchJSData("http://localhost:8080/transaction/" + userId + "/month", token)
+    let url = `http://localhost:8080/transaction/${userId}/month`;
+
+    // Se tiver mês selecionado, adiciona à URL
+    if (selectedMonth !== "") {
+      url += `/${selectedMonth}`;
+    }
+    //se não re-seta
+    else {
+      url = `http://localhost:8080/transaction/${userId}/month`;
+    }
+
+    fetchJSData(url, token)
       .then((data) => {
         const trans = data.content;
 
@@ -160,7 +192,7 @@ export default function Dashboard() {
       .catch((err) => {
         toast.error("Erro ao buscar resumo financeiro: " + err);
       });
-  }, [token, userId, reload]);
+  }, [token, userId, reload, selectedMonth]);
 
   //useEffect para alterar grafico de barras BALANCE
   useEffect(() => {
@@ -169,25 +201,20 @@ export default function Dashboard() {
         const months = data.content;
 
         const incomeArray = Array(12).fill(0);
-        const spentArray = Array(12).fill(0);
-        const cashbackArray = Array(12).fill(0);
         const investmentArray = Array(12).fill(0);
 
         months.forEach((item) => {
           const monthIndex = parseInt(item.date.split("-")[1], 10) - 1;
           if (monthIndex >= 0 && monthIndex < 12) {
             incomeArray[monthIndex] = item.income || 0;
+            investmentArray[monthIndex] = item.totalInvestment || 0;
           }
           incomeArray[monthIndex] = item.income || 0;
-          spentArray[monthIndex] = item.totalSpent || 0;
-          cashbackArray[monthIndex] = item.totalCashback || 0;
           investmentArray[monthIndex] = item.totalInvestment || 0;
         });
 
         setAnuary({
           income: incomeArray,
-          totalSpent: spentArray,
-          totalCashback: cashbackArray,
           totalInvestment: investmentArray,
         });
       })
@@ -571,7 +598,12 @@ export default function Dashboard() {
                   <i className="fas fa-plus"></i> Add
                 </button>
               </div>
-              <Table columns={tableHeaders} data={tableData} />
+              <Table
+                columns={tableHeaders}
+                data={filteredData}
+                filters={filters}
+                onFilterChange={handleFilterChange}
+              />
               {/* End:Advanced Table */}
             </div>
           </div>
