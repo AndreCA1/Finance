@@ -46,7 +46,7 @@ public class TransactionResource {
         })
     public ResponseEntity<TransactionDTO> insert(@Valid @RequestBody TransactionDTO dto) {
         TransactionDTO transaction = transactionService.insert(dto);
-        monthService.generateMonthlySummary(dto.getDate());
+        monthService.generateMonthSummary(dto.getDate(), dto.getUserId());
         return ResponseEntity.ok(transaction);
     }
 
