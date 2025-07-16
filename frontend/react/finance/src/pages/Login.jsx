@@ -44,6 +44,7 @@ export default function Login() {
       const userIdToken = tokenDecoded.user_id;
 
       // 2. Segundo fetch: obter nome usando o token
+      console.log(userIdToken);
       const userRes = await fetch(
         "http://localhost:8080/user/name/" + userIdToken,
         {
@@ -134,7 +135,7 @@ export default function Login() {
                 <div className="row mb-3">
                   <div className="col text-end ps-0">
                     <a
-                      href="/forgetPassword"
+                      href="/forget-password"
                       className="d2c_link text-primary text-capitalize"
                     >
                       Forget Password?
