@@ -57,17 +57,17 @@ export default function Login() {
 
       if (!userRes.ok) throw new Error("Erro ao buscar nome do usuário");
 
-      const userData = await userRes.json();
+      const userData = await userRes.text();
 
-      if (userData.name) {
-        localStorage.setItem("username", userData.name);
+      if (userData) {
+        localStorage.setItem("username", userData);
         window.location.href = "/dashboard";
       } else {
         toast.error("Nome não recebido");
       }
     } catch (err) {
       console.error(err);
-      toast.error("Erro no login: " + err.message);
+      toast.error("Erro no nome: " + err.message);
     }
   };
 

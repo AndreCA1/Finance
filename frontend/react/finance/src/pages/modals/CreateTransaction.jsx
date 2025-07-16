@@ -26,7 +26,6 @@ export default function CreateTransactionModal({ isOpen, onClose, onSubmit }) {
   };
 
   const handleSubmit = (e) => {
-    console.log("SUBMIT - PREVENTING DEFAULT");
     e.preventDefault();
 
     onClose();
