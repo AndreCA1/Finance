@@ -62,6 +62,23 @@ public class UserResource {
         return ResponseEntity.ok(user);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @GetMapping(value = "/name/{id}", produces = "application/json")
+    @Operation(
+            description = "Find user name by ID",
+            summary = "Find user name by ID",
+            responses = {
+                    @ApiResponse(description = "Ok", responseCode = "200"),
+                    @ApiResponse(description = "Bad request", responseCode = "400"),
+                    @ApiResponse(description = "UnAuthorized", responseCode = "401"),
+                    @ApiResponse(description = "Forbidden", responseCode = "403"),
+                    @ApiResponse(description = "NotFound", responseCode = "404")
+            })
+    public String searchNameById(@PathVariable Long id) {
+        UserDTO user = userService.findById(id);
+        return user.getName();
+    }
+
     @PostMapping(produces = "application/json")
     @Operation(
             description = "Create a new user",
