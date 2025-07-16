@@ -84,7 +84,6 @@ public class MonthService {
                 .sum();
     }
 
-    // Executa às 23:59 no último dia de cada mês
     @Scheduled(cron = "0 0 0 1 * ?")
     @Transactional
     public void generateMonthlySummaries() {
@@ -99,7 +98,11 @@ public class MonthService {
     @Transactional
     public MonthDTO searchCurrentMonthReceipt(Long id){
         try{
-            return monthRepository.searchCurrentMonthReceipt(id);
+            MonthDTO dto = monthRepository.searchCurrentMonthReceipt(id);
+
+            if(dto == null) throw new ResourceNotFound("Current month not found for this user");
+
+            return dto;
         } catch (DataIntegrityViolationException e) {
             throw new DataBaseException("Integrity violation");
         }
@@ -108,7 +111,7 @@ public class MonthService {
     @Transactional
     public Page<MonthDTO> searchAllMonthReceipt(Long id, Pageable pageable){
         if(!monthRepository.existsById(id)) {
-            throw new ResourceNotFound("Transaction not found: " + id);
+            throw new ResourceNotFound("no months found for this user: " + id);
         }
         try{
             return monthRepository.searchAllMonthsReceipt(id, pageable);
