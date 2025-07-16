@@ -125,7 +125,7 @@ export default function ForgetPassword() {
                     </button>
                   </div>
                   <a
-                    href="/signin"
+                    href="/"
                     className="d2c_link_btn btn w-100 d-flex align-items-center justify-content-center text-capitalize"
                   >
                     Voltar para login

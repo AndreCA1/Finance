@@ -547,7 +547,7 @@ export default function Dashboard() {
                 {/* Income Card */}
                 <InfoCard
                   title="Income"
-                  subtitle="Last Month"
+                  subtitle="This Month"
                   value={summary.income ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
@@ -556,7 +556,7 @@ export default function Dashboard() {
                 {/* Total Spent */}
                 <InfoCard
                   title="Total Spent"
-                  subtitle="Last Month"
+                  subtitle="This Month"
                   value={summary.totalSpent ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
@@ -565,7 +565,7 @@ export default function Dashboard() {
                 {/* Total Cashback */}
                 <InfoCard
                   title="Total Cashback"
-                  subtitle="Last Month"
+                  subtitle="This Month"
                   value={summary.totalCashback ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
@@ -574,7 +574,7 @@ export default function Dashboard() {
                 {/* Investment */}
                 <InfoCard
                   title="Investment"
-                  subtitle="Last Month"
+                  subtitle="This Month"
                   value={summary.totalInvestment ?? 0}
                   iconClass="fas fa-dollar-sign"
                   textColor="text-primary"
