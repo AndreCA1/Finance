@@ -86,9 +86,11 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDTO update(Long id, UserDTO dto) {
         try{
-            User entity = repository.getReferenceById(id);
-            //joga o q está no dto para o entity
-            copyDtoToEntity(dto, entity);
+            User entity = repository.findById(id).orElseThrow(() -> new ResourceNotFound("User not found: " + id));
+
+            //O nome é a única coisa q pode ser alterada
+            entity.setName(dto.getName());
+
             entity = repository.save(entity);
             return new UserDTO(entity);
 
