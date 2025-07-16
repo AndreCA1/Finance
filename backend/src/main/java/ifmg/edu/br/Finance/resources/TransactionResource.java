@@ -4,6 +4,7 @@ import ifmg.edu.br.Finance.dtos.MonthDTO;
 import ifmg.edu.br.Finance.dtos.TransactionDTO;
 import ifmg.edu.br.Finance.dtos.UserDTO;
 import ifmg.edu.br.Finance.dtos.UserInsertDTO;
+import ifmg.edu.br.Finance.services.MonthService;
 import ifmg.edu.br.Finance.services.TransactionService;
 import ifmg.edu.br.Finance.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,9 @@ public class TransactionResource {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private MonthService monthService;
+
     @PostMapping(produces = "application/json")
     @Operation(
             description = "Create a new transaction",
@@ -42,7 +46,7 @@ public class TransactionResource {
         })
     public ResponseEntity<TransactionDTO> insert(@Valid @RequestBody TransactionDTO dto) {
         TransactionDTO transaction = transactionService.insert(dto);
-
+        monthService.generateMonthlySummary(dto.getDate());
         return ResponseEntity.ok(transaction);
     }
 

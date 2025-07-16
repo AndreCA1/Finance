@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp"
 import Dashboard from "./pages/Dashboard";
+import ProfileSetting from "./pages/ProfileSetting";
 import NotFound from "./pages/NotFound";
 import PrivateRoute from "./utils/PrivateRoute";
 import { ToastContainer, toast } from "react-toastify";
@@ -16,7 +17,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           {/* rota para 404 */}
           <Route path="*" element={<NotFound />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/setting" element={<ProfileSetting />} />
 
           <Route
             path="/dashboard"

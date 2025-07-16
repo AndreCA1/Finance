@@ -6,16 +6,28 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Repository
 public interface MonthRepository extends JpaRepository<Month, Long> {
 
-    @Query("SELECT COUNT(m) > 0 FROM Month m WHERE m.user.id = :userId AND FUNCTION('DATE', m.date) = :date")
-    boolean existsByUserIdAndDate(@Param("userId") Long userId, @Param("date") Date date);
+    @Query(nativeQuery = true,
+            value = """
+                SELECT m.id,
+                	   m.date,
+                	   m.income,
+                	   m.total_spent,
+                	   m.total_transactions,
+                	   m.total_cashback,
+                	   m.total_investment,
+                	   m.user_id
+                   FROM tb_month m
+                   WHERE m.user_id = :userId AND DATE(m.date) = DATE(:date);
+            """
+    )
+    Month monthByUserIdAndDate(Long userId, Date date);
 
     @Query(nativeQuery = true,
             value = """

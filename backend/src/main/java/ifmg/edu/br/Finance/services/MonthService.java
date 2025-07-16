@@ -4,12 +4,9 @@ import ifmg.edu.br.Finance.entities.Transaction;
 import ifmg.edu.br.Finance.repository.TransactionRepository;
 import ifmg.edu.br.Finance.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import ifmg.edu.br.Finance.dtos.MonthDTO;
@@ -18,12 +15,10 @@ import ifmg.edu.br.Finance.entities.User;
 import ifmg.edu.br.Finance.repository.MonthRepository;
 import ifmg.edu.br.Finance.services.exceptions.DataBaseException;
 import ifmg.edu.br.Finance.services.exceptions.ResourceNotFound;
-import jakarta.transaction.Transactional;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -37,28 +32,24 @@ public class MonthService {
     @Autowired
     private UserRepository userRepository;
 
-    public void generateMonthlySummary() {
-        System.out.println("\nExecutando agendador: " + LocalDateTime.now() + "\n");
-        YearMonth currentMonth = YearMonth.now();
-        YearMonth lastMonth = currentMonth.minusMonths(1);
-        Date summaryDate = Date.valueOf(lastMonth.atDay(1));
+    public void generateMonthlySummary(Date date) {
+        LocalDate localDate = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
 
-        LocalDate start = lastMonth.atDay(1);
-        LocalDate end = lastMonth.atEndOfMonth();
+        LocalDate startLocal = localDate.withDayOfMonth(1);
+
+        LocalDate endLocal = localDate.withDayOfMonth(localDate.lengthOfMonth());
+
+        Date start = java.sql.Date.valueOf(startLocal);
+        Date end = java.sql.Date.valueOf(endLocal);
 
         List<User> users = userRepository.findAll();
 
         for (User user : users) {
             Long userId = user.getId();
 
-            boolean alreadyExists = monthRepository.existsByUserIdAndDate(userId, summaryDate);
-            if (alreadyExists) continue;
-
-            List<Transaction> transactions = transactionRepository.findByUserIdAndDateBetween(
-                    userId,
-                    java.sql.Date.valueOf(start),
-                    java.sql.Date.valueOf(end)
-            );
+            List<Transaction> transactions = transactionRepository.findByUserIdAndDateBetween(userId,start,end);
 
             if (transactions.isEmpty()) continue;
 
@@ -68,9 +59,14 @@ public class MonthService {
             float investment = sumByType(transactions, "INVESTMENT");
 
             Month entity = new Month();
+            Month month = monthRepository.monthByUserIdAndDate(userId, start);
+
+            if(monthRepository.existsById(month.getId())){
+                entity = monthRepository.getReferenceById(month.getId());
+            }
 
             entity.setUser(user);
-            entity.setDate(summaryDate);
+            entity.setDate(start);
 
             entity.setIncome(income);
             entity.setTotalSpent(spent);

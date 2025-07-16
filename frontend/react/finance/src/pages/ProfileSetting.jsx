@@ -45,6 +45,7 @@ export default function ProfileSetting() {
     };
 
     return (
+        <>
         <div className="col-xl-12 mb-4">
             <div className="card">
                 <div className="card-header">
@@ -94,5 +95,6 @@ export default function ProfileSetting() {
                 </div>
             </div>
         </div>
+        </>
     );
 }
