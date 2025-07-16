@@ -6,11 +6,12 @@ import InfoCard from "../utils/InfoCard";
 import Table from "../utils/Table";
 import CreateTransactionModal from "./modals/CreateTransaction";
 import { toast } from "react-toastify";
+import ModalAlterName from "./modals/ModalAlterName";
 
 export default function Dashboard() {
   let userId = 0;
+  let username = localStorage.getItem("username");
 
-  //consts
   //tema
   const [isDarkTheme, setIsDarkTheme] = useState(true);
   //sumario para cards
@@ -37,6 +38,42 @@ export default function Dashboard() {
 
   //useStates para recarregar especificos
   const [reload, setReload] = useState(0);
+
+  const [reloadName, setReloadName] = useState(0);
+
+  //modal alterar nome
+  const [showModalAlterName, setshowModalAlterName] = useState(false);
+
+  const handleAlterName = async (data) => {
+    const formated = {
+      date: data.date,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8080/user/" + userId, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formated),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao enviar transação");
+      }
+
+      const responseData = await response.json();
+
+      localStorage.setItem("username", responseData.name);
+
+      setshowModalAlterName(false);
+      setReloadName((prev) => prev + 1);
+      toast.success("Nome alterado");
+    } catch (error) {
+      toast.error("Erro ao atualizar useState: " + error.message);
+    }
+  };
 
   //modal para transações
   const [showModalTransiction, setshowModalTransiction] = useState(false);
@@ -124,7 +161,7 @@ export default function Dashboard() {
       amount: 0,
     },
   ]);
-  
+
   const [selectedMonth, setSelectedMonth] = useState("");
   const [filters, setFilters] = useState({
     payee: "",
@@ -442,13 +479,33 @@ export default function Dashboard() {
               </a>
               {/* End:Profile Image*/}
               <div className="card-body mt-4">
-                <a
-                  className="nav-link p-0 d-inline-flex align-items-center gap-2"
-                  href="/profile"
-                >
-                  <span className="fw-bold mb-0">Wade Warren</span>
-                  <i className="fas fa-cog"></i>
-                </a>
+                <div className="nav-link p-0 d-inline-flex align-items-center gap-2">
+                  <span className="fw-bold mb-0">{username}</span>
+                  <li className="list-inline-item position-relative">
+                    <a
+                      className="nav-link p-0"
+                      href="#"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <i className="fas fa-cog"></i>
+                    </a>
+                    <div className="dropdown-list dropdown-menu shadow border-0 end-0 py-0 mt-3">
+                      <h6 className="dropdown-header text-white bg-primary rounded-top py-3">
+                        Settings
+                      </h6>
+                      <div className="d2c_profile_settings">
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => setshowModalAlterName(true)}
+                        >
+                          <i className="fas fa-plus"></i> Edit name
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                </div>
               </div>
             </div>
             {/* End:Profile */}
@@ -575,7 +632,9 @@ export default function Dashboard() {
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
                       currency: "BRL",
-                    }).format(anuary.totalInvestment.reduce((acc, val) => acc + val, 0))}
+                    }).format(
+                      anuary.totalInvestment.reduce((acc, val) => acc + val, 0),
+                    )}
                   </h4>
                 </div>
                 <div className="card-body">
@@ -613,6 +672,11 @@ export default function Dashboard() {
             isOpen={showModalTransiction}
             onClose={() => setshowModalTransiction(false)}
             onSubmit={handleNewTransaction}
+          />
+          <ModalAlterName
+            isOpen={showModalAlterName}
+            onClose={() => setshowModalAlterName(false)}
+            onSubmit={handleAlterName()}
           />
 
           {/*END Modals*/}

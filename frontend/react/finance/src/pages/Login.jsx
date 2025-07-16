@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const clientId = "finance";
     const clientSecret = "myclientsecret";
-
     const basicAuth = btoa(`${clientId}:${clientSecret}`);
 
     const body = new URLSearchParams();
@@ -19,32 +19,56 @@ export default function Login() {
     body.append("password", password);
     body.append("grant_type", "password");
 
-    fetch("http://localhost:8080/oauth2/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${basicAuth}`,
-      },
-      body: body.toString(),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Login falhou");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.access_token) {
-          localStorage.setItem("access_token", data.access_token); // Armazena o token
-          console.log("Token armazenado:", data.access_token);
-          // Redirecionar para outra página
-          window.location.href = "/dashboard";
-        } else {
-          toast.error("Token não recebido");
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Erro no login: " + err);
+    try {
+      // 1. Primeiro fetch: obter o token
+      const tokenRes = await fetch("http://localhost:8080/oauth2/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${basicAuth}`,
+        },
+        body: body.toString(),
       });
+
+      if (!tokenRes.ok) throw new Error("Login falhou");
+
+      const tokenData = await tokenRes.json();
+      const accessToken = tokenData.access_token;
+
+      if (!accessToken) throw new Error("Token não recebido");
+
+      localStorage.setItem("access_token", accessToken);
+      console.log("Token armazenado:", accessToken);
+
+      const tokenDecoded = jwtDecode(accessToken);
+      const userIdToken = tokenDecoded.user_id;
+
+      // 2. Segundo fetch: obter nome usando o token
+      const userRes = await fetch(
+        "http://localhost:8080/user/name/" + userIdToken,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      if (!userRes.ok) throw new Error("Erro ao buscar nome do usuário");
+
+      const userData = await userRes.json();
+
+      if (userData.name) {
+        localStorage.setItem("username", userData.name);
+        window.location.href = "/dashboard";
+      } else {
+        toast.error("Nome não recebido");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro no login: " + err.message);
+    }
   };
 
   return (
