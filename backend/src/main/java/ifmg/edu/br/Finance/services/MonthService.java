@@ -85,7 +85,7 @@ public class MonthService {
     }
 
     // Executa às 23:59 no último dia de cada mês
-    @Scheduled(cron = "0 59 23 L * ?")
+    @Scheduled(cron = "0 0 0 1 * ?")
     @Transactional
     public void generateMonthlySummaries() {
         List<User> users = userRepository.findAll();
