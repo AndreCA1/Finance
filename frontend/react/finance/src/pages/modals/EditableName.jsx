@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function EditableName({ initialName = "José Silva", onSubmit }) {
   const [editing, setEditing] = useState(false);
@@ -7,7 +8,6 @@ export default function EditableName({ initialName = "José Silva", onSubmit }) 
 
   const inputRef = useRef(null);
 
-  // Seleciona o texto quando entrar em modo edição
   useEffect(() => {
     if (editing && inputRef.current) {
       inputRef.current.focus();
@@ -24,6 +24,14 @@ export default function EditableName({ initialName = "José Silva", onSubmit }) 
   };
 
   const confirmEdit = () => {
+    if (!tempName.trim()) {
+      setTempName(name);
+
+      setEditing(false);
+      toast.error("Nome não pode ser vazio");
+      return;
+    }
+
     setName(tempName);
     setEditing(false);
     if (onSubmit) onSubmit(tempName);
@@ -43,7 +51,7 @@ export default function EditableName({ initialName = "José Silva", onSubmit }) 
           value={tempName}
           onChange={(e) => setTempName(e.target.value)}
           onKeyDown={handleKeyDown}
-          onBlur={confirmEdit} // opcional: salva ao clicar fora
+          onBlur={confirmEdit}
           className="form-control form-control-sm"
           style={{ maxWidth: "200px" }}
         />

@@ -42,9 +42,11 @@ export default function Dashboard() {
   const [reloadName, setReloadName] = useState(0);
 
   //modal alterar nome
-  const [showModalAlterName, setshowModalAlterName] = useState(false);
-
   const handleAlterName = async (name) => {
+    if (!name) {
+      toast.error("Nome não pode ser vazio");
+      return;
+    }
     const formated = {
       name: name,
     };
@@ -67,7 +69,6 @@ export default function Dashboard() {
 
       localStorage.setItem("username", name);
 
-      setshowModalAlterName(false);
       setReloadName((prev) => prev + 1);
       toast.success("Nome alterado");
     } catch (error) {
@@ -482,7 +483,7 @@ export default function Dashboard() {
                 <div className="nav-link p-0 d-inline-flex align-items-center gap-2">
                   <EditableName
                     initialName={username}
-                    onSubmit={handleAlterName} // supondo que setUsername exista
+                    onSubmit={handleAlterName}
                   />
                 </div>
               </div>
@@ -651,10 +652,6 @@ export default function Dashboard() {
             isOpen={showModalTransiction}
             onClose={() => setshowModalTransiction(false)}
             onSubmit={handleNewTransaction}
-          />
-          <EditableName
-            initialName={username}
-            onSubmit={(newName) => setReloadName(newName)} // ou salvar em API
           />
 
           {/*END Modals*/}
