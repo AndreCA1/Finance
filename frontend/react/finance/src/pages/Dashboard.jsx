@@ -5,8 +5,8 @@ import { fetchJSData } from "../utils/api";
 import InfoCard from "../utils/InfoCard";
 import Table from "../utils/Table";
 import CreateTransactionModal from "./modals/CreateTransaction";
+import EditableName from "./modals/EditableName";
 import { toast } from "react-toastify";
-import ModalAlterName from "./modals/ModalAlterName";
 
 export default function Dashboard() {
   let userId = 0;
@@ -44,9 +44,9 @@ export default function Dashboard() {
   //modal alterar nome
   const [showModalAlterName, setshowModalAlterName] = useState(false);
 
-  const handleAlterName = async (data) => {
+  const handleAlterName = async (name) => {
     const formated = {
-      date: data.date,
+      name: name,
     };
 
     try {
@@ -60,12 +60,12 @@ export default function Dashboard() {
       });
 
       if (!response.ok) {
-        throw new Error("Erro ao enviar transação");
+        throw new Error("Erro ao alterar nome");
       }
 
       const responseData = await response.json();
 
-      localStorage.setItem("username", responseData.name);
+      localStorage.setItem("username", name);
 
       setshowModalAlterName(false);
       setReloadName((prev) => prev + 1);
@@ -480,31 +480,10 @@ export default function Dashboard() {
               {/* End:Profile Image*/}
               <div className="card-body mt-4">
                 <div className="nav-link p-0 d-inline-flex align-items-center gap-2">
-                  <span className="fw-bold mb-0">{username}</span>
-                  <li className="list-inline-item position-relative">
-                    <a
-                      className="nav-link p-0"
-                      href="#"
-                      role="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      <i className="fas fa-cog"></i>
-                    </a>
-                    <div className="dropdown-list dropdown-menu shadow border-0 end-0 py-0 mt-3">
-                      <h6 className="dropdown-header text-white bg-primary rounded-top py-3">
-                        Settings
-                      </h6>
-                      <div className="d2c_profile_settings">
-                        <button
-                          className="btn btn-primary"
-                          onClick={() => setshowModalAlterName(true)}
-                        >
-                          <i className="fas fa-plus"></i> Edit name
-                        </button>
-                      </div>
-                    </div>
-                  </li>
+                  <EditableName
+                    initialName={username}
+                    onSubmit={handleAlterName} // supondo que setUsername exista
+                  />
                 </div>
               </div>
             </div>
@@ -673,10 +652,9 @@ export default function Dashboard() {
             onClose={() => setshowModalTransiction(false)}
             onSubmit={handleNewTransaction}
           />
-          <ModalAlterName
-            isOpen={showModalAlterName}
-            onClose={() => setshowModalAlterName(false)}
-            onSubmit={handleAlterName()}
+          <EditableName
+            initialName={username}
+            onSubmit={(newName) => setReloadName(newName)} // ou salvar em API
           />
 
           {/*END Modals*/}
