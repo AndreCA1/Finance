@@ -2,6 +2,7 @@ package ifmg.edu.br.Finance.resources;
 
 import ifmg.edu.br.Finance.dtos.UserDTO;
 import ifmg.edu.br.Finance.dtos.UserInsertDTO;
+import ifmg.edu.br.Finance.services.MonthService;
 import ifmg.edu.br.Finance.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Date;
 
 
 @RestController
@@ -26,6 +28,9 @@ public class UserResource {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private MonthService monthService;
 
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping(produces = "application/json")
@@ -91,7 +96,7 @@ public class UserResource {
         })
     public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO dto) {
         UserDTO user = userService.insert(dto);
-
+        monthService.generateMonthSummary(new Date(), user.getId());
         //Pegar o caminho da minha aplicação da requisição atual e adiciona uma nova parte com o id
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(user.getId()).toUri();
 
