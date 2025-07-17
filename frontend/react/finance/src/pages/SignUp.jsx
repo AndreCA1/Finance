@@ -109,7 +109,7 @@ export default function SignUp() {
                     <input
                       type={showPassword ? "text" : "password"}
                       className="form-control border-end-0"
-                      placeholder="8+ character required"
+                      placeholder="Password"
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}

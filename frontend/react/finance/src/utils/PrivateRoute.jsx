@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 
 export default function PrivateRoute({ children }) {
-  const token = localStorage.getItem("token"); // ou 'authToken', conforme você salvou
+  const token = localStorage.getItem("access_token"); // ou 'authToken', conforme você salvou
 
   // Se não houver token, redireciona para login
   if (!token) {

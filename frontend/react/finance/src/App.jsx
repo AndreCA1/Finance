@@ -6,6 +6,7 @@ import ProfileSetting from "./pages/ProfileSetting";
 import NotFound from "./pages/NotFound";
 import ForgetPassword from "./pages/ForgetPass";
 import PrivateRoute from "./utils/PrivateRoute";
+// eslint-disable-next-line no-unused-vars
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -24,9 +25,9 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              //            <PrivateRoute>
+            <PrivateRoute>
               <Dashboard />
-              //          </PrivateRoute>
+              </PrivateRoute>
             }
           />
         </Routes>
