@@ -126,7 +126,7 @@ public class UserResource {
                     @ApiResponse(description = "Forbidden", responseCode = "403"),
                     @ApiResponse(description = "NotFound", responseCode = "404")
             })
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();

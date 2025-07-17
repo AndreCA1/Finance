@@ -1,12 +1,8 @@
 package ifmg.edu.br.Finance.resources;
 
-import ifmg.edu.br.Finance.dtos.MonthDTO;
 import ifmg.edu.br.Finance.dtos.TransactionDTO;
-import ifmg.edu.br.Finance.dtos.UserDTO;
-import ifmg.edu.br.Finance.dtos.UserInsertDTO;
 import ifmg.edu.br.Finance.services.MonthService;
 import ifmg.edu.br.Finance.services.TransactionService;
-import ifmg.edu.br.Finance.services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,9 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 
 
 @RestController
@@ -34,6 +28,7 @@ public class TransactionResource {
     @Autowired
     private MonthService monthService;
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @PostMapping(produces = "application/json")
     @Operation(
             description = "Create a new transaction",
@@ -84,7 +79,7 @@ public class TransactionResource {
         return ResponseEntity.noContent().build();
     }
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "/{id}/month", produces = "application/json")
     @Operation(
             description = "Get all transactions of current month",

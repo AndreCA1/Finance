@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,7 +23,7 @@ public class MonthResource {
     @Autowired
     private MonthService monthService;
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "/{id}", produces = "application/json")
     @Operation(
             description = "Get sum of current month",
@@ -39,7 +40,7 @@ public class MonthResource {
         return ResponseEntity.ok(page);
     }
 
-    //@PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
     @GetMapping(value = "/{id}/all", produces = "application/json")
     @Operation(
             description = "Get sum of all months",
