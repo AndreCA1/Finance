@@ -471,13 +471,11 @@ export default function Dashboard() {
             {/* Profile */}
             <div className="card d2c_profile_card text-center mb-4">
               {/* Profile Image */}
-              <a href="./pages/elements/profile.html">
                 <img
                   className="rounded-circle d2c_profile_image position-absolute top-0 start-50 translate-middle mb-2"
                   src="./assets/images/profile/profile-1.jpg"
                   alt="d2c Profile Image"
                 />
-              </a>
               {/* End:Profile Image*/}
               <div className="card-body mt-4">
                 <div className="nav-link p-0 d-inline-flex align-items-center gap-2">
