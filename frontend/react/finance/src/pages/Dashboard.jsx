@@ -14,6 +14,20 @@ export default function Dashboard() {
 
   //tema
   const [isDarkTheme, setIsDarkTheme] = useState(true);
+
+  //logout
+  const handleLogout = (event) => {
+  // Impede o comportamento padrão do link (que é navegar para a href)
+  event.preventDefault();
+
+  // Remove os itens do localStorage
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("username");
+
+  // Opcional: Redireciona o usuário para a página inicial/login
+  window.location.href = "/";
+};
+
   //sumario para cards
   const [summary, setSummary] = useState({
     income: 0,
@@ -39,7 +53,6 @@ export default function Dashboard() {
   //useStates para recarregar especificos
   const [reload, setReload] = useState(0);
 
-  const [reloadName, setReloadName] = useState(0);
 
   //modal alterar nome
   const handleAlterName = async (name) => {
@@ -65,11 +78,9 @@ export default function Dashboard() {
         throw new Error("Erro ao alterar nome");
       }
 
-      const responseData = await response.json();
 
       localStorage.setItem("username", name);
 
-      setReloadName((prev) => prev + 1);
       toast.success("Nome alterado");
     } catch (error) {
       toast.error("Erro ao atualizar useState: " + error.message);
@@ -234,6 +245,8 @@ export default function Dashboard() {
 
   //useEffect para alterar grafico de barras BALANCE
   useEffect(() => {
+    if (!userId || !token) return;
+
     fetchJSData("http://localhost:8080/month/" + userId + "/all", token)
       .then((data) => {
         const months = data.content;
@@ -247,8 +260,6 @@ export default function Dashboard() {
             incomeArray[monthIndex] = item.income || 0;
             investmentArray[monthIndex] = item.totalInvestment || 0;
           }
-          incomeArray[monthIndex] = item.income || 0;
-          investmentArray[monthIndex] = item.totalInvestment || 0;
         });
 
         setAnuary({
@@ -517,7 +528,7 @@ export default function Dashboard() {
                 <ul className="navbar-nav">
                   {/* Item */}
                   <li className="nav-item">
-                    <a className="nav-link" href="/">
+                    <a className="nav-link" href="/" onClick={handleLogout}>
                       <span className="d2c_icon text-danger">
                         <i className="fas fa-sign-out-alt"></i>
                       </span>

@@ -69,4 +69,6 @@ public interface MonthRepository extends JpaRepository<Month, Long> {
             nativeQuery = true
     )
     MonthDTO searchCurrentMonthReceipt(Long userId);
+
+    boolean existsByUser_Id(long userId);
 }

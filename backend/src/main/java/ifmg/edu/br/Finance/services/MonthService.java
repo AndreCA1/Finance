@@ -110,7 +110,7 @@ public class MonthService {
 
     @Transactional
     public Page<MonthDTO> searchAllMonthReceipt(Long id, Pageable pageable){
-        if(!monthRepository.existsById(id)) {
+        if(!monthRepository.existsByUser_Id(id)) {
             throw new ResourceNotFound("no months found for this user: " + id);
         }
         try{
